@@ -7,7 +7,7 @@
  * @typedef {Object} Endpoint
  * @property {string} path Path name
  * @property {string[]} methods Methods handled
- * @property {string[]} middlewares Mounted middlewares
+ * @property {{ name: string, fn: Function }[]} middlewares Mounted middlewares
  */
 
 const regExpToParseExpressPathRegExp = /^\/\^\\?\/?(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\\?\/?\([^)]+\)\)))\\\/.*/
@@ -39,11 +39,14 @@ const getRouteMethods = function (route) {
  * Returns the names (or anonymous) of all the middlewares attached to the
  * passed route
  * @param {Route} route
- * @returns {string[]}
+ * @returns {{name: string, fn: Function}[]}
  */
 const getRouteMiddlewares = function (route) {
   return route.stack.map((item) => {
-    return item.handle.name || 'anonymous'
+    return {
+      name: item.handle.name || 'anonymous',
+      fn: item.handle,
+    }
   })
 }
 
